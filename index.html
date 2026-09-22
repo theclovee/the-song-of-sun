@@ -18,27 +18,28 @@
       box-sizing: border-box;
     }
     .card {
-      background: white;
+      background: #ffffff;
       max-width: 450px;
       width: 100%;
-      padding: 30px 25px;
+      padding: 25px 20px;
       border-radius: 24px;
       box-shadow: 0 10px 25px rgba(214, 51, 132, 0.15);
       text-align: center;
+      box-sizing: border-box;
     }
-    /* Style Bingkai Foto Utama */
-      .profile-photo {
-      width: 140px;
-      height: 140px;
+    /* Foto Rasio 16:9 */
+    .banner-photo {
+      width: 100%;
+      aspect-ratio: 16 / 9;
       object-fit: cover;
-      border-radius: 50%;
-      border: 4px solid #ff85a2;
-      box-shadow: 0 4px 12px rgba(214, 51, 132, 0.2);
-      margin-bottom: 10px;
-    }
+      border-radius: 16px;
+      border: 3px solid #ff85a2;
+      box-shadow: 0 4px 12px rgba(214, 51, 132, 0.15);
+      margin-bottom: 15px;
+      display: block;
     }
     .heart {
-      font-size: 32px;
+      font-size: 30px;
       animation: pulse 1.2s infinite alternate;
       margin-bottom: 5px;
     }
@@ -47,22 +48,21 @@
     }
     h1 {
       color: #d63384;
-      font-size: 24px;
-      margin-bottom: 8px;
-      margin-top: 5px;
+      font-size: 22px;
+      margin: 5px 0 8px 0;
     }
     p.sub {
       color: #777;
       font-size: 14px;
       margin-top: 0;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
     .counter-title {
-      font-size: 13px;
+      font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: #888;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       font-weight: 600;
     }
     .counter-box {
@@ -70,16 +70,16 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       background: #fff0f4;
-      padding: 15px 10px;
+      padding: 15px 8px;
       border-radius: 16px;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
     .time-unit {
       display: flex;
       flex-direction: column;
     }
     .number {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       color: #d63384;
     }
@@ -103,11 +103,11 @@
     }
     .btn-timeline {
       background-color: #ff85a2;
-      color: white;
+      color: #ffffff;
     }
     .btn-words {
       background-color: #7209b7;
-      color: white;
+      color: #ffffff;
     }
     .btn:hover {
       transform: translateY(-2px);
@@ -118,8 +118,8 @@
 <body>
 
   <div class="card">
-    <!-- Foto Utama -->
-    <img src="foto-utama.jpg" alt="Reyen & Aku" class="profile-photo">
+    <!-- Foto Utama 16:9 -->
+    <img src="foto-utama.jpg" alt="Astra & Reyen" class="banner-photo">
     
     <div class="heart">💖</div>
     <h1>Happy 2nd Anniversary, RARE!</h1>
