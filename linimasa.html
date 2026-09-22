@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Timeline - Rekap Perjalanan</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       background-color: #fff0f3;
@@ -13,6 +13,7 @@
       max-width: 500px;
       margin: 0 auto;
       color: #333;
+      box-sizing: border-box;
     }
     .header {
       text-align: center;
@@ -20,11 +21,19 @@
     }
     h1 {
       color: #ff4d6d;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
+      font-size: 26px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #ff758f;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 15px;
     }
     audio {
       width: 100%;
-      margin-top: 15px;
+      margin-top: 10px;
       border-radius: 30px;
     }
     .timeline {
@@ -36,45 +45,58 @@
     .event {
       margin-bottom: 30px;
       position: relative;
-      background: white;
-      padding: 18px;
-      border-radius: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      background: #ffffff;
+      padding: 20px 18px;
+      border-radius: 18px;
+      box-shadow: 0 4px 12px rgba(214, 51, 132, 0.08);
     }
     .event::before {
       content: '🌸';
       position: absolute;
       left: -33px;
-      top: 15px;
+      top: 18px;
       font-size: 14px;
     }
     .date {
       font-weight: 600;
       color: #ff4d6d;
-      font-size: 13px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     .title {
-      font-weight: 600;
-      font-size: 16px;
-      margin: 4px 0 8px 0;
+      font-weight: 700;
+      font-size: 17px;
+      color: #c9184a;
+      margin: 4px 0 10px 0;
     }
     .desc {
-      font-size: 14px;
-      color: #666;
-      line-height: 1.5;
+      font-size: 13.5px;
+      color: #555;
+      line-height: 1.6;
+    }
+    /* Foto Rasio 16:9 */
+    .img-box {
+      margin-top: 12px;
+      width: 100%;
     }
     .img-box img {
       width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
       border-radius: 12px;
-      margin-top: 10px;
+      border: 2px solid #ffb3c1;
+      display: block;
     }
     .back-btn {
       display: block;
       text-align: center;
-      margin-top: 30px;
+      margin-top: 35px;
+      margin-bottom: 20px;
       color: #ff4d6d;
       text-decoration: none;
       font-weight: 600;
+      font-size: 15px;
     }
   </style>
 </head>
@@ -82,7 +104,7 @@
 
   <div class="header">
     <h1>The Timeline</h1>
-    <p style="font-size: 13px; color: #777;">Momen-momen paling berkesan kita 💕</p>
+    <p class="subtitle">✨ 7 Keajaiban Momen Epik RARE ✨</p>
     
     <!-- Pemutar Musik -->
     <audio controls autoplay loop>
@@ -95,26 +117,58 @@
     
     <!-- Momen 1 -->
     <div class="event">
-      <div class="date">September 2024</div>
-      <div class="title">Awal Mula Perjalanan</div>
-      <div class="desc">Hari di mana kita memutuskan untuk jalan bareng dan memulai cerita ini.</div>
-      <!-- Hapus baris di bawah jika tidak ada foto -->
-      <!-- <div class="img-box"><img src="foto1.jpg" alt="Momen 1"></div> -->
+      <div class="date">18 Agustus 2024</div>
+      <div class="title">First Encounter!</div>
+      <div class="desc">Tiada hari yang lebih berkesan dari pada hari dimana pertama kali kita dipertemukan. Responmu yang malu-malu sangat membuat Astra kegemesannnnnnn 🙈❤️</div>
+      <div class="img-box"><img src="momen1.jpg" alt="First Encounter"></div>
     </div>
 
     <!-- Momen 2 -->
     <div class="event">
-      <div class="date">Bulan/Tahun Momen</div>
-      <div class="title">Judul Momen Berkesan</div>
-      <div class="desc">Tulis cerita singkat tentang kenangan di bulan ini di sini...</div>
-      <!-- <div class="img-box"><img src="foto2.jpg" alt="Momen 2"></div> -->
+      <div class="date">22 September 2024</div>
+      <div class="title">The Day We Bound</div>
+      <div class="desc">Hari ini adalah hari dimana aku memilihmu. Ketika semua kebersamaan kita menjadi lebih berarti, saat itu aku yakin bahwa aku ingin selalu bersamamu sebagai seorang kekasih 💞. The boy who drinking Yakult in broad daylight keeps coming to my mind 🍼✨</div>
+      <div class="img-box"><img src="momen2.jpg" alt="The Day We Bound"></div>
     </div>
 
     <!-- Momen 3 -->
     <div class="event">
-      <div class="date">September 2026</div>
-      <div class="title">2 Tahun Bersama</div>
-      <div class="desc">Selamat 2 tahun, Reyen! Masih banyak momen indah lain yang siap kita buat.</div>
+      <div class="date">7 Desember 2024</div>
+      <div class="title">The First Love</div>
+      <div class="desc">Tebak ini hari apa? Hari pertama kali kita membuat cinta. Xixixi making love. No komen banyak banyak, maluuuuuu 🫣💋</div>
+      <div class="img-box"><img src="momen3.jpg" alt="The First Love"></div>
+    </div>
+
+    <!-- Momen 4 -->
+    <div class="event">
+      <div class="date">18 Agustus 2025 - 22 September 2025</div>
+      <div class="title">The 1st Anniversary</div>
+      <div class="desc">Tentu saja perayaan satu tahun hubungan kita tidak boleh dilupakan. Saat itu kita banyak menghabiskan waktu dengan Mega-Super Flying RV, bercumbu mesra, dan enak-enak hehe 🚐💕</div>
+      <div class="img-box"><img src="momen4.jpg" alt="The 1st Anniversary"></div>
+    </div>
+
+    <!-- Momen 5 -->
+    <div class="event">
+      <div class="date">31 Desember 2025 - 1 Januari 2026</div>
+      <div class="title">Rare's First New Years Eve</div>
+      <div class="desc">Momen ketika pertama kali kita merayakan tahun baru bersama tentu tidak akan pernah terlupakan. Desiran ombak yang merdu, angin pantai yang sejuk, dan senyumanmu yang indah melebur menjadi satu bersama aroma udang bakar yang lejat xixixi, peace 🌊🍤✌️</div>
+      <div class="img-box"><img src="momen5.jpg" alt="Rare's First New Years Eve"></div>
+    </div>
+
+    <!-- Momen 6 -->
+    <div class="event">
+      <div class="date">20 April 2026</div>
+      <div class="title">Talee's Birth</div>
+      <div class="desc">Ha ingat ingat! 20 April ulang tahun Talee! Yap, di hari inilah Starry Zoldream (Teri) dan Skylee Zoldream (Kili) terlahir. Malaikat-malaikat kecil Zoldream yang menggemaskan siap tumbuh menjadi pemuda dan pemudi yang tangguh! 🐱✨</div>
+      <div class="img-box"><img src="momen6.jpg" alt="Talee's Birth"></div>
+    </div>
+
+    <!-- Momen 7 -->
+    <div class="event">
+      <div class="date">22 September 2026</div>
+      <div class="title">2nd Anniversary!</div>
+      <div class="desc">Yo, today is the day! Untuk pertama kalinya kita merayakan acara anniversary ini dengan EO dan mengundang banyak teman-teman xixixi. Rasanya aku bahagia sekali bisa melakukan banyak hal baru denganmu. Aku akan menunggumu di anniversary selanjutnya ya~ 🎉💖</div>
+      <div class="img-box"><img src="momen7.jpg" alt="2nd Anniversary"></div>
     </div>
 
   </div>
