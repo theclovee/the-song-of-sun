@@ -19,6 +19,30 @@
       flex-direction: column;
       justify-content: center;
     }
+
+    /* Tombol Musik Melayang */
+    .music-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #059669;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      z-index: 100;
+      transition: transform 0.2s ease;
+    }
+    .music-btn:active {
+      transform: scale(0.9);
+    }
+
     .quiz-card {
       background: #ffffff;
       padding: 25px 20px;
@@ -78,7 +102,7 @@
       background: #d1fae5;
       border-color: #059669;
     }
-    /* Style Opsi yang Sedang Dipilih */
+    /* Style Opsi Terpilih */
     .option-btn.selected {
       background: #059669;
       color: #ffffff;
@@ -109,10 +133,6 @@
     .btn-next {
       background-color: #059669;
       color: #ffffff;
-    }
-    .nav-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
     }
 
     .warning-msg {
@@ -175,12 +195,16 @@
 </head>
 <body>
 
+  <!-- Audio Tersembunyi & Tombol Mute/Unmute -->
+  <audio id="bg-music" loop src="lagu-kuis.mp3"></audio>
+  <button id="music-toggle" class="music-btn">🎵</button>
+
   <div class="quiz-card">
     
     <!-- Bagian Pertanyaan Kuis -->
     <div id="quiz-box">
       <h1>The Game 🎮</h1>
-      <p class="subtitle">Hai Reyen, selamat datang di kuis uji kecocokan dengan Astra!</p>
+      <p class="subtitle">Hai Reyen, seberapa jauh kamu mengenal Astra?</p>
       
       <div class="progress-bar" id="progress">Pertanyaan 1 dari 10</div>
       <div class="question" id="question-text">Loading Pertanyaan...</div>
@@ -212,6 +236,38 @@
   <a href="index.html" class="back-btn">⬅️ Kembali ke Beranda</a>
 
   <script>
+    // SISTEM AUDIO
+    const audio = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-toggle');
+
+    function playAudio() {
+      audio.play().then(() => {
+        musicBtn.innerText = '🎵';
+      }).catch(() => {
+        musicBtn.innerText = '🔇';
+      });
+    }
+
+    playAudio();
+
+    document.addEventListener('click', function initAudio() {
+      if (audio.paused) {
+        playAudio();
+      }
+      document.removeEventListener('click', initAudio);
+    }, { once: true });
+
+    musicBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (audio.paused) {
+        audio.play();
+        musicBtn.innerText = '🎵';
+      } else {
+        audio.pause();
+        musicBtn.innerText = '🔇';
+      }
+    });
+
     // DATA PERTANYAAN & JAWABAN
     const questions = [
       {
@@ -267,7 +323,6 @@
     ];
 
     let currentQuestion = 0;
-    // Menyimpan jawaban terpilih Reyen (-1 artinya belum diisi)
     let userAnswers = new Array(questions.length).fill(-1);
 
     function loadQuestion() {
@@ -291,7 +346,6 @@
         optionsContainer.appendChild(btn);
       });
 
-      // Kontrol Tombol Prev
       const prevBtn = document.getElementById("prev-btn");
       if (currentQuestion === 0) {
         prevBtn.style.visibility = "hidden";
@@ -299,7 +353,6 @@
         prevBtn.style.visibility = "visible";
       }
 
-      // Kontrol Tombol Next
       const nextBtn = document.getElementById("next-btn");
       if (currentQuestion === questions.length - 1) {
         nextBtn.innerText = "Lihat Hasil 🚀";
@@ -312,7 +365,6 @@
       userAnswers[currentQuestion] = index;
       document.getElementById("warning-text").innerText = "";
       
-      // Update tampilan opsi terpilih
       const buttons = document.querySelectorAll(".option-btn");
       buttons.forEach((btn, i) => {
         if (i === index) {
@@ -324,7 +376,6 @@
     }
 
     function nextQuestion() {
-      // Validasi wajib isi
       if (userAnswers[currentQuestion] === -1) {
         document.getElementById("warning-text").innerText = "⚠️ Pilih dulu kocak!";
         return;
@@ -365,7 +416,7 @@
 
       if (percentage <= 30) {
         emoji = "🗿";
-        text = "Jangan maen maen lu ya";
+        text = "Lu nyawit ya?";
       } else if (percentage <= 50) {
         emoji = "🧐";
         text = "Hm macam tak betul je budak ni";
@@ -374,7 +425,7 @@
         text = "Masih bisa ditoleransi, masih oke";
       } else if (percentage <= 90) {
         emoji = "😎";
-        text = "Lumayan lah ni bg, acc.";
+        text = "Lumayan lah ni bg, Acc.";
       } else {
         emoji = "🔥";
         text = "ANJAY COTY FINAL BOS! RARE JAYA JAYA JAYA!";
@@ -392,7 +443,6 @@
       loadQuestion();
     }
 
-    // Jalankan pertama kali
     loadQuestion();
   </script>
 </body>
