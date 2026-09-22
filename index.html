@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy 2nd Anniversary, Reyen!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #ffeef2;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .card {
+      background: white;
+      max-width: 450px;
+      width: 100%;
+      padding: 30px 25px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(214, 51, 132, 0.15);
+      text-align: center;
+    }
+    .heart {
+      font-size: 50px;
+      animation: pulse 1.2s infinite alternate;
+      margin-bottom: 10px;
+    }
+    @keyframes pulse {
+      to { transform: scale(1.18); }
+    }
+    h1 {
+      color: #d63384;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    p.sub {
+      color: #777;
+      font-size: 14px;
+      margin-top: 0;
+      margin-bottom: 25px;
+    }
+    .counter-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .counter-box {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: #fff0f4;
+      padding: 15px 10px;
+      border-radius: 16px;
+      margin-bottom: 30px;
+    }
+    .time-unit {
+      display: flex;
+      flex-direction: column;
+    }
+    .number {
+      font-size: 20px;
+      font-weight: 700;
+      color: #d63384;
+    }
+    .label {
+      font-size: 11px;
+      color: #666;
+    }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .btn {
+      display: block;
+      padding: 14px 20px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+    .btn-timeline {
+      background-color: #ff85a2;
+      color: white;
+    }
+    .btn-words {
+      background-color: #7209b7;
+      color: white;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="heart">💖</div>
+    <h1>Happy 2nd Anniversary!</h1>
+    <p class="sub">Untuk Reyen tersayang ✨</p>
+
+    <div class="counter-title">Kita Sudah Bersama Selama:</div>
+    <div class="counter-box">
+      <div class="time-unit"><span class="number" id="days">0</span><span class="label">Hari</span></div>
+      <div class="time-unit"><span class="number" id="hours">0</span><span class="label">Jam</span></div>
+      <div class="time-unit"><span class="number" id="minutes">0</span><span class="label">Menit</span></div>
+      <div class="time-unit"><span class="number" id="seconds">0</span><span class="label">Detik</span></div>
+    </div>
+
+    <div class="button-group">
+      <a href="linimasa.html" class="btn btn-timeline">📖 The Timeline</a>
+      <a href="surat.html" class="btn btn-words">💌 The Words</a>
+    </div>
+  </div>
+
+  <script>
+    // Tanggal Jadian: 22 September 2024
+    const startDate = new Date("2024-09-22T00:00:00").getTime();
+
+    function updateCounter() {
+      const now = new Date().getTime();
+      const difference = now - startDate;
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      document.getElementById("days").innerText = days;
+      document.getElementById("hours").innerText = hours;
+      document.getElementById("minutes").innerText = minutes;
+      document.getElementById("seconds").innerText = seconds;
+    }
+
+    setInterval(updateCounter, 1000);
+    updateCounter();
+  </script>
+</body>
+</html>
