@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RARE Runner Game</title>
+  <title>Reyen & Astra Endless Runner</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -165,21 +165,21 @@
   <button id="music-toggle" class="music-btn">🎵</button>
 
   <div class="game-card">
-    <h1>RARE Runner 🏃💨</h1>
-    <p class="subtitle" id="gameSubtitle">Pilih karakter yang paling oke!</p>
+    <h1>Reyen & Astra Runner 🏃💨</h1>
+    <p class="subtitle" id="gameSubtitle">Pilih karaktermu di bawah untuk memulai!</p>
 
     <!-- Layar Pilih Karakter -->
     <div id="selectionScreen">
       <div class="char-select-box">
         <div class="char-card" id="cardAstra" onclick="selectCharacter('astra')">
-          <img src="foto-astra.jpg" alt="Astra" class="char-img">
+          <img src="foto-utama.jpg" alt="Astra" class="char-img">
           <div class="char-name">Astra</div>
-          <div class="char-emoji-badge">🐸</div>
+          <div class="char-emoji-badge">🐸 (Kodok)</div>
         </div>
         <div class="char-card" id="cardReyen" onclick="selectCharacter('reyen')">
-          <img src="foto=reyen.jpg" alt="Reyen" class="char-img">
+          <img src="momen1.jpg" alt="Reyen" class="char-img">
           <div class="char-name">Reyen</div>
-          <div class="char-emoji-badge">🐱</div>
+          <div class="char-emoji-badge">🐱 (Kucing)</div>
         </div>
       </div>
     </div>
@@ -193,13 +193,13 @@
     <!-- Canvas -->
     <canvas id="gameCanvas" width="400" height="200"></canvas>
 
-    <button class="start-btn" id="startBtn" disabled onclick="startGame()">Pilih Karakter Dulu Bg👆</button>
+    <button class="start-btn" id="startBtn" disabled onclick="startGame()">Pilih Karakter Dulu 👆</button>
   </div>
 
   <a href="index.html" class="back-btn">⬅️ Kembali ke Beranda</a>
 
   <script>
-    // WEBAUDIO SOUND EFFECTS
+    // EFEK SUARA MENGGUNAKAN WEB AUDIO API
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playSound(type) {
@@ -239,7 +239,7 @@
       }
     }
 
-    // BG MUSIC & AUTOPLAY FIX
+    // MUSIK LATAR & PENANGANAN AUTOPLAY BROWSER
     const bgMusic = document.getElementById('bg-music');
     const musicBtn = document.getElementById('music-toggle');
 
@@ -261,13 +261,12 @@
       }
     });
 
-    // GAME VARIABLES
+    // VARIABEL UTAMA GAME
     let selectedChar = null;
     let isPlaying = false;
     let score = 0;
     let highScore = localStorage.getItem("runner_highScore") || 0;
     let lives = 3;
-    let invulnerableTimer = 0;
     let animationFrameId;
 
     const canvas = document.getElementById("gameCanvas");
@@ -320,7 +319,7 @@
       startBtn.disabled = false;
       startBtn.innerText = "▶️ Mulai Permainan";
 
-      document.getElementById("gameSubtitle").innerText = "Karakter terpilih! Gas ngeng!.";
+      document.getElementById("gameSubtitle").innerText = "Karakter terpilih! Klik tombol mulai.";
 
       drawInitialCanvas();
       playMusic();
@@ -370,7 +369,7 @@
       ctx.lineWidth = 3;
       ctx.stroke();
 
-      // Gravity Player
+      // Grafitasi Pemain
       player.dy += player.gravity;
       player.y += player.dy;
 
@@ -380,16 +379,12 @@
         player.isGrounded = true;
       }
 
-      if (invulnerableTimer > 0) {
-        invulnerableTimer--;
-      }
-
       drawPlayer();
 
       let baseSpeed = 4.2 + Math.min(score / 150, 2.5);
       let spawnInterval = Math.max(85 - Math.floor(score / 50), 55);
 
-      // Spawn Obstacles
+      // Munculkan Rintangan
       frameCount++;
       if (frameCount % spawnInterval === 0) {
         const randomType = obstacleList[Math.floor(Math.random() * obstacleList.length)];
@@ -399,6 +394,7 @@
         let obsWidth = isJumbo ? 32 : 24;
         let obsHeight = isJumbo ? 32 : 24;
         
+        // Rintangan terbang (ketinggian Y = 65)
         let isFlying = (randomType === "😈" || randomType === "🗿") && (Math.random() < 0.35);
         let posY = isFlying ? 65 : (isJumbo ? 135 : 140);
 
@@ -416,7 +412,7 @@
         });
       }
 
-      // Move & Collide
+      // Pergerakan Rintangan & Deteksi Tabrakan
       for (let i = 0; i < obstacles.length; i++) {
         let obs = obstacles[i];
         obs.x -= obs.speed;
@@ -428,9 +424,8 @@
 
         let currentObsY = obs.y;
         
-        // Tabrakan presisi
+        // Tabrakan Presisi Sederhana (Tanpa Flicker)
         if (
-          invulnerableTimer === 0 &&
           player.x < obs.x + obs.width &&
           player.x + player.width > obs.x &&
           player.y < currentObsY + obs.height &&
@@ -445,8 +440,6 @@
           if (lives <= 0) {
             gameOver();
             return;
-          } else {
-            invulnerableTimer = 45; // Waktu kebal aman
           }
           continue;
         }
@@ -500,7 +493,6 @@
       isPlaying = true;
       score = 0;
       lives = 3;
-      invulnerableTimer = 0;
       obstacles = [];
       particles = [];
       frameCount = 0;
@@ -541,7 +533,7 @@
         ctx.fillText("🎉 REKOR TERTINGGI BARU! 🎉", canvas.width / 2, 120);
         ctx.fillStyle = "#ffffff";
         ctx.font = "11px Poppins";
-        ctx.fillText("Hebat! Kamu makin jago melompati rintangan!", canvas.width / 2, 145);
+        ctx.fillText("Hebat! Kamu makin jago melompati rintangan bersama!", canvas.width / 2, 145);
       } else {
         ctx.font = "12px Poppins";
         ctx.fillText(`Rekor Tertinggi: ${highScore}`, canvas.width / 2, 120);
@@ -549,7 +541,7 @@
       }
 
       const startBtn = document.getElementById("startBtn");
-      startBtn.innerText = "🔄 Lagi Bg";
+      startBtn.innerText = "🔄 Main Lagi";
       startBtn.style.display = "block";
     }
 
