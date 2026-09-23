@@ -166,7 +166,7 @@
 
   <div class="game-card">
     <h1>RARE Runner 🏃💨</h1>
-    <p class="subtitle" id="gameSubtitle">Pilih karakter yang paling oke!</p>
+    <p class="subtitle" id="gameSubtitle">Pilih karaktermu di bawah untuk memulai!</p>
 
     <!-- Layar Pilih Karakter -->
     <div id="selectionScreen">
@@ -193,7 +193,7 @@
     <!-- Canvas -->
     <canvas id="gameCanvas" width="400" height="200"></canvas>
 
-    <button class="start-btn" id="startBtn" disabled onclick="startGame()">Pilih Karakter Dulu Bg👆</button>
+    <button class="start-btn" id="startBtn" disabled onclick="startGame()">Pilih Karakter Dulu Bg 👆</button>
   </div>
 
   <a href="index.html" class="back-btn">⬅️ Kembali ke Beranda</a>
@@ -267,7 +267,7 @@
     let score = 0;
     let highScore = localStorage.getItem("runner_highScore") || 0;
     let lives = 3;
-    let invulnerableTimer = 0;
+    let invulnerableTimer = 0; // Mode kebal 1.5 detik setelah kena tabrak
     let animationFrameId;
 
     const canvas = document.getElementById("gameCanvas");
@@ -276,8 +276,8 @@
     const player = {
       x: 30,
       y: 135,
-      width: 32,
-      height: 35,
+      width: 30,
+      height: 30,
       dy: 0,
       gravity: 0.65,
       jumpPower: -10.8,
@@ -320,7 +320,7 @@
       startBtn.disabled = false;
       startBtn.innerText = "▶️ Mulai Permainan";
 
-      document.getElementById("gameSubtitle").innerText = "Karakter terpilih! Gas Mulai!";
+      document.getElementById("gameSubtitle").innerText = "Karakter terpilih! Klik tombol mulai.";
 
       drawInitialCanvas();
       playMusic();
@@ -328,9 +328,10 @@
 
     function drawPlayer() {
       ctx.save();
-      // Efek transparan halus jika kebal (tanpa bikin karakter hilang sepenuhnya)
+      // Efek berkedip transparan HANYA UNTUK PELARI saat kena tabrak
       if (invulnerableTimer > 0) {
-        ctx.globalAlpha = 0.5;
+        let isBlink = Math.floor(invulnerableTimer / 5) % 2 === 0;
+        ctx.globalAlpha = isBlink ? 0.3 : 0.8;
       } else {
         ctx.globalAlpha = 1.0;
       }
@@ -341,12 +342,12 @@
 
     function drawObstacles() {
       ctx.save();
-      ctx.globalAlpha = 1.0;
+      ctx.globalAlpha = 1.0; // Rintangan selalu padat
       obstacles.forEach(obs => {
         ctx.font = `${obs.fontSize}px Sans-Serif`;
         let currentY = obs.y;
         if (obs.isFlying) {
-          currentY += Math.sin(obs.waveAngle) * 12;
+          currentY += Math.sin(obs.waveAngle) * 6;
         }
         ctx.fillText(obs.type, obs.x, currentY + obs.height);
       });
@@ -407,11 +408,11 @@
         
         let isJumbo = (score >= 100) && (Math.random() < 0.25);
         let fontSize = isJumbo ? 38 : 28;
-        let obsWidth = isJumbo ? 34 : 25;
-        let obsHeight = isJumbo ? 34 : 25;
+        let obsWidth = isJumbo ? 32 : 24;
+        let obsHeight = isJumbo ? 32 : 24;
         
         let isFlying = (randomType === "😈" || randomType === "🗿") && (Math.random() < 0.35);
-        let posY = isFlying ? 110 : (isJumbo ? 135 : 140);
+        let posY = isFlying ? 65 : (isJumbo ? 135 : 140);
 
         obstacles.push({
           x: canvas.width,
@@ -434,28 +435,35 @@
 
         if (obs.isFlying) {
           obs.waveAngle += 0.08;
-          obs.y = obs.baseY + Math.sin(obs.waveAngle) * 12;
+          obs.y = obs.baseY + Math.sin(obs.waveAngle) * 6;
         }
 
+        let currentObsY = obs.y;
+        
+        // Tabrakan presisi
         if (
           invulnerableTimer === 0 &&
           player.x < obs.x + obs.width &&
           player.x + player.width > obs.x &&
-          player.y < obs.y + obs.height &&
-          player.y + player.height > obs.y
+          player.y < currentObsY + obs.height &&
+          player.y + player.height > currentObsY
         ) {
           lives--;
           updateLivesDisplay();
           playSound('hit');
+          obstacles.splice(i, 1);
+          i--;
 
           if (lives <= 0) {
             gameOver();
             return;
           } else {
-            invulnerableTimer = 45;
+            invulnerableTimer = 45; // Aktifkan flicker pelari selama 1.5 detik
           }
+          continue;
         }
 
+        // Melewati rintangan -> Tambah Skor +10
         if (obs.x + obs.width < 0) {
           obstacles.splice(i, 1);
           score += 10;
@@ -496,7 +504,7 @@
 
       document.getElementById("selectionScreen").style.display = "none";
       document.getElementById("infoBar").style.display = "flex";
-      document.getElementById("gameSubtitle").innerText = "Tap layar / tekan Spasi untuk melompat!";
+      document.getElementById("gameSubtitle").innerText = "Tap Tap layar bosku!";
       document.getElementById("startBtn").style.display = "none";
 
       playMusic();
@@ -545,7 +553,7 @@
         ctx.fillText("🎉 REKOR TERTINGGI BARU! 🎉", canvas.width / 2, 120);
         ctx.fillStyle = "#ffffff";
         ctx.font = "11px Poppins";
-        ctx.fillText("Hebat! Kamu makin jago melompati rintangan bersama!", canvas.width / 2, 145);
+        ctx.fillText("Hebat! Kamu makin jago melompati rintangan!", canvas.width / 2, 145);
       } else {
         ctx.font = "12px Poppins";
         ctx.fillText(`Rekor Tertinggi: ${highScore}`, canvas.width / 2, 120);
@@ -553,7 +561,7 @@
       }
 
       const startBtn = document.getElementById("startBtn");
-      startBtn.innerText = "🔄 Lagi dong bg";
+      startBtn.innerText = "🔄 Lagi Bg";
       startBtn.style.display = "block";
     }
 
