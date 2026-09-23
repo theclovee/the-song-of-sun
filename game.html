@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reyen & Astra Endless Runner</title>
+  <title>RARE Runner Game</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -170,23 +170,23 @@
   <button id="music-toggle" class="music-btn">🎵</button>
 
   <div class="game-card">
-    <h1>Reyen & Astra Runner 🏃💨</h1>
-    <p class="subtitle" id="gameSubtitle">Pilih karaktermu di bawah untuk memulai!</p>
+    <h1>RARE Runner 🏃💨</h1>
+    <p class="subtitle" id="gameSubtitle">Pilih karakter yang paling oke!</p>
 
     <!-- Layar Pilih Karakter -->
     <div id="selectionScreen">
       <div class="char-select-box">
         <!-- Astra -->
         <div class="char-card" id="cardAstra" onclick="selectCharacter('astra')">
-          <img src="foto-utama.jpg" alt="Astra" class="char-img">
+          <img src="foto-astra.jpg" alt="Astra" class="char-img">
           <div class="char-name">Astra</div>
-          <div class="char-emoji-badge">🐸 (Kodok)</div>
+          <div class="char-emoji-badge">🐸</div>
         </div>
         <!-- Reyen -->
         <div class="char-card" id="cardReyen" onclick="selectCharacter('reyen')">
-          <img src="momen1.jpg" alt="Reyen" class="char-img">
+          <img src="foto-reyen.jpg" alt="Reyen" class="char-img">
           <div class="char-name">Reyen</div>
-          <div class="char-emoji-badge">🐱 (Kucing)</div>
+          <div class="char-emoji-badge">🐱</div>
         </div>
       </div>
     </div>
@@ -200,7 +200,7 @@
     <!-- Canvas Tempat Game -->
     <canvas id="gameCanvas" width="400" height="200"></canvas>
 
-    <button class="start-btn" id="startBtn" disabled onclick="startGame()">Pilih Karakter Dulu 👆</button>
+    <button class="start-btn" id="startBtn" disabled onclick="startGame()">Pilih Karakter Dulu Bg👆</button>
   </div>
 
   <a href="index.html" class="back-btn">⬅️ Kembali ke Beranda</a>
@@ -481,7 +481,7 @@
 
       document.getElementById("selectionScreen").style.display = "none";
       document.getElementById("infoBar").style.display = "flex";
-      document.getElementById("gameSubtitle").innerText = "Tap layar / tekan Spasi untuk melompat!";
+      document.getElementById("gameSubtitle").innerText = "Tap tap layar bosku!";
       document.getElementById("startBtn").style.display = "none";
 
       playMusic();
@@ -529,7 +529,7 @@
         ctx.fillText("🎉 REKOR TERTINGGI BARU! 🎉", canvas.width / 2, 120);
         ctx.fillStyle = "#ffffff";
         ctx.font = "11px Poppins";
-        ctx.fillText("Hebat! Kamu makin jago melompati rintangan bersama!", canvas.width / 2, 145);
+        ctx.fillText("Hebat! Kamu makin jago melompati rintangan!", canvas.width / 2, 145);
       } else {
         ctx.font = "12px Poppins";
         ctx.fillText(`Rekor Tertinggi: ${highScore}`, canvas.width / 2, 120);
@@ -537,7 +537,7 @@
       }
 
       const startBtn = document.getElementById("startBtn");
-      startBtn.innerText = "🔄 Main Lagi";
+      startBtn.innerText = "🔄 Lagi Bg";
       startBtn.style.display = "block";
     }
 
