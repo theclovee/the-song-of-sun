@@ -53,14 +53,12 @@
       color: #d97706;
       font-size: 22px;
       margin-bottom: 2px;
-      font-weight: 700;
     }
     .subtitle {
-      font-size: 13px;
+      font-size: 12px;
       color: #b45309;
-      font-weight: 600;
       margin-top: 0;
-      margin-bottom: 18px;
+      margin-bottom: 15px;
     }
 
     .char-select-box {
@@ -139,11 +137,9 @@
       font-family: 'Poppins', sans-serif;
       width: 100%;
       box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);
-      transition: all 0.2s ease;
     }
     .start-btn:disabled {
       background-color: #fcd34d;
-      color: #b45309;
       cursor: not-allowed;
       box-shadow: none;
     }
@@ -166,7 +162,7 @@
 
   <div class="game-card">
     <h1>Reyen & Astra Runner 🏃💨</h1>
-    <p class="subtitle" id="gameSubtitle">Pilih karaktermu di bawah untuk memulai!</p>
+    <p class="subtitle" id="gameSubtitle">Pilih Karaktermu Dulu Sebelum Mulai!</p>
 
     <!-- Layar Pilih Karakter -->
     <div id="selectionScreen">
@@ -199,7 +195,7 @@
   <a href="index.html" class="back-btn">⬅️ Kembali ke Beranda</a>
 
   <script>
-    // EFEK SUARA MENGGUNAKAN WEB AUDIO API
+    // WEBAUDIO SOUND EFFECTS
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playSound(type) {
@@ -239,7 +235,7 @@
       }
     }
 
-    // MUSIK LATAR & PENANGANAN AUTOPLAY BROWSER
+    // BG MUSIC & AUTOPLAY FIX
     const bgMusic = document.getElementById('bg-music');
     const musicBtn = document.getElementById('music-toggle');
 
@@ -261,12 +257,13 @@
       }
     });
 
-    // VARIABEL UTAMA GAME
+    // GAME VARIABLES
     let selectedChar = null;
     let isPlaying = false;
     let score = 0;
     let highScore = localStorage.getItem("runner_highScore") || 0;
     let lives = 3;
+    let invulnerableTimer = 0;
     let animationFrameId;
 
     const canvas = document.getElementById("gameCanvas");
@@ -275,8 +272,8 @@
     const player = {
       x: 30,
       y: 135,
-      width: 30,
-      height: 30,
+      width: 32,
+      height: 35,
       dy: 0,
       gravity: 0.65,
       jumpPower: -10.8,
@@ -288,19 +285,6 @@
     let particles = [];
     let frameCount = 0;
     const obstacleList = ["🗿", "🍼", "🦭", "😈"];
-
-    function drawInitialCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
-      ctx.moveTo(0, 175);
-      ctx.lineTo(canvas.width, 175);
-      ctx.strokeStyle = "#d97706";
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      ctx.font = "32px Sans-Serif";
-      ctx.fillText(player.emoji, player.x, player.y + player.height);
-    }
 
     function selectCharacter(char) {
       selectedChar = char;
@@ -319,13 +303,14 @@
       startBtn.disabled = false;
       startBtn.innerText = "▶️ Mulai Permainan";
 
-      document.getElementById("gameSubtitle").innerText = "Karakter terpilih! Klik tombol mulai.";
-
-      drawInitialCanvas();
+      // Pemicu otomatis musik pada klik pertama
       playMusic();
     }
 
     function drawPlayer() {
+      if (invulnerableTimer > 0 && Math.floor(invulnerableTimer / 5) % 2 === 0) {
+        return;
+      }
       ctx.font = "32px Sans-Serif";
       ctx.fillText(player.emoji, player.x, player.y + player.height);
     }
@@ -333,11 +318,7 @@
     function drawObstacles() {
       obstacles.forEach(obs => {
         ctx.font = `${obs.fontSize}px Sans-Serif`;
-        let currentY = obs.y;
-        if (obs.isFlying) {
-          currentY += Math.sin(obs.waveAngle) * 6;
-        }
-        ctx.fillText(obs.type, obs.x, currentY + obs.height);
+        ctx.fillText(obs.type, obs.x, obs.y + obs.height);
       });
     }
 
@@ -369,7 +350,7 @@
       ctx.lineWidth = 3;
       ctx.stroke();
 
-      // Grafitasi Pemain
+      // Gravity Player
       player.dy += player.gravity;
       player.y += player.dy;
 
@@ -379,77 +360,74 @@
         player.isGrounded = true;
       }
 
+      if (invulnerableTimer > 0) {
+        invulnerableTimer--;
+      }
+
       drawPlayer();
 
+      // Kelajuan bertambah halus seiring tinggi skor
       let baseSpeed = 4.2 + Math.min(score / 150, 2.5);
       let spawnInterval = Math.max(85 - Math.floor(score / 50), 55);
 
-      // Munculkan Rintangan
+      // Spawn Obstacles
       frameCount++;
       if (frameCount % spawnInterval === 0) {
         const randomType = obstacleList[Math.floor(Math.random() * obstacleList.length)];
         
+        // Fitur Skor > 100: Kadang muncul ukuran jumbo (25% peluang)
         let isJumbo = (score >= 100) && (Math.random() < 0.25);
         let fontSize = isJumbo ? 38 : 28;
-        let obsWidth = isJumbo ? 32 : 24;
-        let obsHeight = isJumbo ? 32 : 24;
+        let obsWidth = isJumbo ? 34 : 25;
+        let obsHeight = isJumbo ? 34 : 25;
         
-        // Rintangan terbang (ketinggian Y = 65)
-        let isFlying = (randomType === "😈" || randomType === "🗿") && (Math.random() < 0.35);
-        let posY = isFlying ? 65 : (isJumbo ? 135 : 140);
+        // Variasi posisi y: Kadang terbang sedikit (Iblis/Semesta)
+        let isFlying = (randomType === "😈" || randomType === "🗿") && (Math.random() < 0.3);
+        let posY = isFlying ? 115 : (isJumbo ? 135 : 140);
 
         obstacles.push({
           x: canvas.width,
           y: posY,
-          baseY: posY,
           width: obsWidth,
           height: obsHeight,
           fontSize: fontSize,
           type: randomType,
-          speed: baseSpeed,
-          isFlying: isFlying,
-          waveAngle: 0
+          speed: baseSpeed
         });
       }
 
-      // Pergerakan Rintangan & Deteksi Tabrakan
+      // Move & Collide
       for (let i = 0; i < obstacles.length; i++) {
         let obs = obstacles[i];
         obs.x -= obs.speed;
 
-        if (obs.isFlying) {
-          obs.waveAngle += 0.08;
-          obs.y = obs.baseY + Math.sin(obs.waveAngle) * 6;
-        }
-
-        let currentObsY = obs.y;
-        
-        // Tabrakan Presisi Sederhana (Tanpa Flicker)
+        // Hitbox Collision
         if (
+          invulnerableTimer === 0 &&
           player.x < obs.x + obs.width &&
           player.x + player.width > obs.x &&
-          player.y < currentObsY + obs.height &&
-          player.y + player.height > currentObsY
+          player.y < obs.y + obs.height &&
+          player.y + player.height > obs.y
         ) {
           lives--;
           updateLivesDisplay();
           playSound('hit');
-          obstacles.splice(i, 1);
-          i--;
 
           if (lives <= 0) {
             gameOver();
             return;
+          } else {
+            invulnerableTimer = 45;
           }
-          continue;
         }
 
-        // Melewati rintangan -> Tambah Skor +10
+        // Passed Obstacle -> +10 Score
         if (obs.x + obs.width < 0) {
           obstacles.splice(i, 1);
           score += 10;
           document.getElementById("scoreText").innerText = score;
           
+          // Efek Teks Melayang +10
           particles.push({
             x: player.x + 10,
             y: player.y,
@@ -485,7 +463,7 @@
 
       document.getElementById("selectionScreen").style.display = "none";
       document.getElementById("infoBar").style.display = "flex";
-      document.getElementById("gameSubtitle").innerText = "Tap layar / tekan Spasi untuk melompat!";
+      document.getElementById("gameSubtitle").innerText = "Tap layar / tekan Spasi untuk lompat!";
       document.getElementById("startBtn").style.display = "none";
 
       playMusic();
@@ -493,6 +471,7 @@
       isPlaying = true;
       score = 0;
       lives = 3;
+      invulnerableTimer = 0;
       obstacles = [];
       particles = [];
       frameCount = 0;
@@ -561,7 +540,10 @@
       jump();
     });
 
-    drawInitialCanvas();
+    ctx.font = "bold 15px Poppins";
+    ctx.fillStyle = "#d97706";
+    ctx.textAlign = "center";
+    ctx.fillText("Pilih Karakter & Klik Mulai!", canvas.width / 2, 105);
   </script>
 </body>
 </html>
