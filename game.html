@@ -54,12 +54,14 @@
       color: #d97706;
       font-size: 22px;
       margin-bottom: 2px;
+      font-weight: 700;
     }
     .subtitle {
-      font-size: 12px;
+      font-size: 13px;
       color: #b45309;
+      font-weight: 600;
       margin-top: 0;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     /* Selection Screen */
@@ -141,9 +143,11 @@
       font-family: 'Poppins', sans-serif;
       width: 100%;
       box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);
+      transition: all 0.2s ease;
     }
     .start-btn:disabled {
       background-color: #fcd34d;
+      color: #b45309;
       cursor: not-allowed;
       box-shadow: none;
     }
@@ -167,7 +171,7 @@
 
   <div class="game-card">
     <h1>Reyen & Astra Runner 🏃💨</h1>
-    <p class="subtitle" id="gameSubtitle">Pilih Karaktermu Dulu Sebelum Mulai!</p>
+    <p class="subtitle" id="gameSubtitle">Pilih karaktermu di bawah untuk memulai!</p>
 
     <!-- Layar Pilih Karakter -->
     <div id="selectionScreen">
@@ -246,11 +250,18 @@
     const bgMusic = document.getElementById('bg-music');
     const musicBtn = document.getElementById('music-toggle');
 
+    function playMusic() {
+      bgMusic.play().then(() => {
+        musicBtn.innerText = '🎵';
+      }).catch(() => {
+        musicBtn.innerText = '🔇';
+      });
+    }
+
     musicBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       if (bgMusic.paused) {
-        bgMusic.play();
-        musicBtn.innerText = '🎵';
+        playMusic();
       } else {
         bgMusic.pause();
         musicBtn.innerText = '🔇';
@@ -263,7 +274,7 @@
     let score = 0;
     let highScore = localStorage.getItem("runner_highScore") || 0;
     let lives = 3;
-    let invulnerableTimer = 0; // Waktu kebal setelah kena tabrak
+    let invulnerableTimer = 0;
     let animationFrameId;
 
     const canvas = document.getElementById("gameCanvas");
@@ -273,20 +284,33 @@
     const player = {
       x: 30,
       y: 135,
-      width: 32,
-      height: 35,
+      width: 30,
+      height: 30,
       dy: 0,
       gravity: 0.65,
-      jumpPower: -10.5,
+      jumpPower: -10.8,
       isGrounded: true,
       emoji: "🐸"
     };
 
-    // Obstacles
+    // Obstacles & Particles
     let obstacles = [];
+    let particles = [];
     let frameCount = 0;
-    // Rintangan Random: Meme Semesta (🗿), Yakult (🍼), Anjing Laut (🦭), Iblis (😈)
     const obstacleList = ["🗿", "🍼", "🦭", "😈"];
+
+    function drawInitialCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.moveTo(0, 175);
+      ctx.lineTo(canvas.width, 175);
+      ctx.strokeStyle = "#d97706";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.font = "32px Sans-Serif";
+      ctx.fillText(player.emoji, player.x, player.y + player.height);
+    }
 
     function selectCharacter(char) {
       selectedChar = char;
@@ -304,22 +328,38 @@
       const startBtn = document.getElementById("startBtn");
       startBtn.disabled = false;
       startBtn.innerText = "▶️ Mulai Permainan";
+
+      document.getElementById("gameSubtitle").innerText = "Karakter terpilih! Klik tombol mulai.";
+
+      drawInitialCanvas();
+      playMusic();
     }
 
     function drawPlayer() {
-      // Efek berkedip saat kebal setelah ketabrak
-      if (invulnerableTimer > 0 && Math.floor(invulnerableTimer / 5) % 2 === 0) {
-        return;
-      }
       ctx.font = "32px Sans-Serif";
       ctx.fillText(player.emoji, player.x, player.y + player.height);
     }
 
     function drawObstacles() {
       obstacles.forEach(obs => {
-        ctx.font = "28px Sans-Serif";
+        ctx.font = `${obs.fontSize}px Sans-Serif`;
         ctx.fillText(obs.type, obs.x, obs.y + obs.height);
       });
+    }
+
+    function drawParticles() {
+      for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        ctx.fillStyle = `rgba(217, 119, 6, ${p.alpha})`;
+        ctx.font = "bold 13px Poppins";
+        ctx.fillText(p.text, p.x, p.y);
+        p.y -= 1;
+        p.alpha -= 0.03;
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          i--;
+        }
+      }
     }
 
     function updateGame() {
@@ -351,17 +391,32 @@
 
       drawPlayer();
 
-      // Spawn Rintangan Random
+      let baseSpeed = 4.2 + Math.min(score / 150, 2.5);
+      let spawnInterval = Math.max(85 - Math.floor(score / 50), 55);
+
+      // Spawn Obstacles
       frameCount++;
-      if (frameCount % 85 === 0) {
-        const randomObstacle = obstacleList[Math.floor(Math.random() * obstacleList.length)];
+      if (frameCount % spawnInterval === 0) {
+        const randomType = obstacleList[Math.floor(Math.random() * obstacleList.length)];
+        
+        // Poin 2: Variasi Ukuran saat Skor >= 50
+        let isJumbo = (score >= 50) && (Math.random() < 0.3);
+        let fontSize = isJumbo ? 38 : 28;
+        let obsWidth = isJumbo ? 32 : 24;
+        let obsHeight = isJumbo ? 32 : 24;
+        
+        // Poin 2: Rintangan Terbang di Udara saat Skor >= 100 (Ketinggian Y = 65, aman dikolongin)
+        let isFlying = (score >= 100) && (randomType === "😈" || randomType === "🗿") && (Math.random() < 0.4);
+        let posY = isFlying ? 65 : (isJumbo ? 135 : 140);
+
         obstacles.push({
           x: canvas.width,
-          y: 140,
-          width: 25,
-          height: 25,
-          type: randomObstacle,
-          speed: 4.2
+          y: posY,
+          width: obsWidth,
+          height: obsHeight,
+          fontSize: fontSize,
+          type: randomType,
+          speed: baseSpeed
         });
       }
 
@@ -370,17 +425,21 @@
         let obs = obstacles[i];
         obs.x -= obs.speed;
 
-        // Collision Check
+        let currentObsY = obs.y;
+
+        // Tabrakan Presisi
         if (
           invulnerableTimer === 0 &&
           player.x < obs.x + obs.width &&
           player.x + player.width > obs.x &&
-          player.y < obs.y + obs.height &&
-          player.y + player.height > obs.y
+          player.y < currentObsY + obs.height &&
+          player.y + player.height > currentObsY
         ) {
           lives--;
           updateLivesDisplay();
           playSound('hit');
+          obstacles.splice(i, 1);
+          i--;
 
           if (lives <= 0) {
             gameOver();
@@ -388,6 +447,7 @@
           } else {
             invulnerableTimer = 45; // Kebal sebentar
           }
+          continue;
         }
 
         // Hapus Rintangan & Tambah Skor +10
@@ -395,11 +455,21 @@
           obstacles.splice(i, 1);
           score += 10;
           document.getElementById("scoreText").innerText = score;
+          
+          // Poin 3: Efek Teks Skor Melayang (+10)
+          particles.push({
+            x: player.x + 10,
+            y: player.y,
+            text: "+10",
+            alpha: 1.0
+          });
+
           i--;
         }
       }
 
       drawObstacles();
+      drawParticles();
       animationFrameId = requestAnimationFrame(updateGame);
     }
 
@@ -420,20 +490,19 @@
     function startGame() {
       if (!selectedChar) return;
 
-      // Sembunyikan layar pilih karakter
       document.getElementById("selectionScreen").style.display = "none";
       document.getElementById("infoBar").style.display = "flex";
-      document.getElementById("gameSubtitle").innerText = "Tap layar / tekan Spasi untuk lompat!";
+      document.getElementById("gameSubtitle").innerText = "Tap layar / tekan Spasi untuk melompat!";
       document.getElementById("startBtn").style.display = "none";
 
-      // Jalankan Lagu Utama
-      bgMusic.play().catch(() => {});
+      playMusic();
 
       isPlaying = true;
       score = 0;
       lives = 3;
       invulnerableTimer = 0;
       obstacles = [];
+      particles = [];
       frameCount = 0;
       player.y = 135;
       
@@ -501,11 +570,7 @@
       jump();
     });
 
-    // Tampilan awal Canvas
-    ctx.font = "bold 15px Poppins";
-    ctx.fillStyle = "#d97706";
-    ctx.textAlign = "center";
-    ctx.fillText("Pilih Karakter & Klik Mulai!", canvas.width / 2, 105);
+    drawInitialCanvas();
   </script>
 </body>
 </html>
