@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Reyen & Astra Photo Merge Game 🍉</title>
+  <title>RARE Watermelon Game 🍉</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <!-- Pustaka Fisika Matter.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
@@ -225,16 +225,16 @@
     <!-- BAR NAVIGASI ATAS -->
     <div class="top-nav-bar">
       <a href="index.html" class="top-back-btn">⬅️ Beranda</a>
-      <h1 style="font-size: 18px; margin: 0;">Merge Game 🍉</h1>
+      <h1 style="font-size: 18px; margin: 0;">Watermelon Game 🍉</h1>
       <div style="width: 60px;"></div> <!-- Spacer penyeimbang -->
     </div>
 
     <!-- 1. HALAMAN PEMBUKA / WELCOME SCREEN -->
     <div id="welcomeScreen" class="welcome-screen">
-      <div class="welcome-emoji">🍉✨</div>
-      <p class="subtitle">Game Menumpuk Foto Spesial 2nd Anniversary</p>
+      <div class="welcome-emoji">🍉</div>
+      <p class="subtitle">Watermelon Game</p>
       <div class="welcome-text">
-        Geser & lepaskan foto lingkaran dari atas. Gabungkan foto sejenis untuk membentuk ukuran foto yang lebih besar sampai menjadi <b>Foto Raksasa Ultimate</b>!
+        Gabungkan foto sejenis untuk membentuk ukuran foto yang lebih besar sampai menjadi <b>Foto Raksasa Ultimate</b>!
       </div>
       <button class="start-btn" onclick="startFromWelcome()">▶️ Mulai Permainan</button>
     </div>
@@ -246,20 +246,20 @@
       <div class="score-container">
         <div>Skor: <span id="scoreText">0</span></div>
         <div>Rekor: <span id="highScoreText">0</span></div>
-        <div>Berikutnya: <img id="nextPreviewImg" class="preview-img-badge" src="momen1.jpg" alt="Next"></div>
+        <div>Berikutnya: <img id="nextPreviewImg" class="preview-img-badge" src="level1.jpg" alt="Next"></div>
       </div>
 
       <!-- Container Fisika Game (Luas 380x520) -->
       <div id="game-container">
         <div class="danger-line"></div>
-        <div class="danger-label">DANGER ⚠️</div>
+        <div class="danger-label">⚠️</div>
         
         <!-- Overlay Game Over -->
         <div id="gameOverOverlay" class="overlay" style="display: none;">
           <h2>GAME OVER! 💔</h2>
           <p id="gameOverScore">Skor Akhir: 0</p>
           <div id="highScoreNotice" class="high-score-tag"></div>
-          <button class="start-btn" style="width: auto;" onclick="restartGame()">🔄 Main Lagi</button>
+          <button class="start-btn" style="width: auto;" onclick="restartGame()">🔄 Lagi Bg</button>
         </div>
       </div>
     </div>
@@ -271,14 +271,14 @@
   <script>
     // PROPORSI SIZES FOTO LINGKARAN DENGAN ARENA BARU (380x520)
     const PHOTO_LEVELS = [
-      { level: 1, radius: 18, src: "momen1.jpg", score: 2 },
-      { level: 2, radius: 26, src: "momen2.jpg", score: 4 },
-      { level: 3, radius: 36, src: "momen3.jpg", score: 8 },
-      { level: 4, radius: 48, src: "momen4.jpg", score: 16 }, // Batas Drop Maksimal
-      { level: 5, radius: 62, src: "momen5.jpg", score: 32 },
-      { level: 6, radius: 78, src: "momen6.jpg", score: 64 },
-      { level: 7, radius: 96, src: "momen7.jpg", score: 128 },
-      { level: 8, radius: 118, src: "foto-utama.jpg", score: 256 } // Raksasa Ultimate
+      { level: 1, radius: 18, src: "level1.jpg", score: 2 },
+      { level: 2, radius: 26, src: "level2.jpg", score: 4 },
+      { level: 3, radius: 36, src: "level3.jpg", score: 8 },
+      { level: 4, radius: 48, src: "level4.jpg", score: 16 }, // Batas Drop Maksimal
+      { level: 5, radius: 62, src: "level5.jpg", score: 32 },
+      { level: 6, radius: 78, src: "level6.jpg", score: 64 },
+      { level: 7, radius: 96, src: "level7.jpg", score: 128 },
+      { level: 8, radius: 118, src: "level8.jpg", score: 256 } // Raksasa Ultimate
     ];
 
     // PRELOAD FOTO
