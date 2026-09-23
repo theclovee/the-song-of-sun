@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RARE Emoji Runner</title>
+  <title>RARE Runner Game</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -53,12 +53,14 @@
       color: #d97706;
       font-size: 22px;
       margin-bottom: 2px;
+      font-weight: 700;
     }
     .subtitle {
-      font-size: 12px;
+      font-size: 13px;
       color: #b45309;
+      font-weight: 600;
       margin-top: 0;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     .char-select-box {
@@ -137,9 +139,11 @@
       font-family: 'Poppins', sans-serif;
       width: 100%;
       box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);
+      transition: all 0.2s ease;
     }
     .start-btn:disabled {
       background-color: #fcd34d;
+      color: #b45309;
       cursor: not-allowed;
       box-shadow: none;
     }
@@ -161,19 +165,19 @@
   <button id="music-toggle" class="music-btn">🎵</button>
 
   <div class="game-card">
-    <h1>Pick The Runner 🏃</h1>
-    <p class="subtitle" id="gameSubtitle">Pilih Karakter Yang Paling Oke!</p>
+    <h1>RARE Runner 🏃💨</h1>
+    <p class="subtitle" id="gameSubtitle">Pilih karakter paling oke!</p>
 
     <!-- Layar Pilih Karakter -->
     <div id="selectionScreen">
       <div class="char-select-box">
         <div class="char-card" id="cardAstra" onclick="selectCharacter('astra')">
-          <img src="foto-utama.jpg" alt="Astra" class="char-img">
+          <img src="foto-astra.jpg" alt="Astra" class="char-img">
           <div class="char-name">Astra</div>
           <div class="char-emoji-badge">🐸</div>
         </div>
         <div class="char-card" id="cardReyen" onclick="selectCharacter('reyen')">
-          <img src="momen1.jpg" alt="Reyen" class="char-img">
+          <img src="foto-astra.jpg" alt="Reyen" class="char-img">
           <div class="char-name">Reyen</div>
           <div class="char-emoji-badge">🐱</div>
         </div>
@@ -189,7 +193,7 @@
     <!-- Canvas -->
     <canvas id="gameCanvas" width="400" height="200"></canvas>
 
-    <button class="start-btn" id="startBtn" disabled onclick="startGame()">Pilih Karakter Dulu 👆</button>
+    <button class="start-btn" id="startBtn" disabled onclick="startGame()">Pilih Karakter Dulu Bg 👆</button>
   </div>
 
   <a href="index.html" class="back-btn">⬅️ Kembali ke Beranda</a>
@@ -286,6 +290,21 @@
     let frameCount = 0;
     const obstacleList = ["🗿", "🍼", "🦭", "😈"];
 
+    function drawInitialCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Garis Tanah Awal
+      ctx.beginPath();
+      ctx.moveTo(0, 175);
+      ctx.lineTo(canvas.width, 175);
+      ctx.strokeStyle = "#d97706";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Gambar Karakter Awal Di Kiri
+      ctx.font = "32px Sans-Serif";
+      ctx.fillText(player.emoji, player.x, player.y + player.height);
+    }
+
     function selectCharacter(char) {
       selectedChar = char;
       document.getElementById("cardAstra").classList.remove("selected");
@@ -303,6 +322,9 @@
       startBtn.disabled = false;
       startBtn.innerText = "▶️ Mulai Permainan";
 
+      document.getElementById("gameSubtitle").innerText = "Karakter terpilih! Klik tombol mulai.";
+
+      drawInitialCanvas();
       playMusic();
     }
 
@@ -317,10 +339,9 @@
     function drawObstacles() {
       obstacles.forEach(obs => {
         ctx.font = `${obs.fontSize}px Sans-Serif`;
-        // Efek posisi y berdetak/terapung jika rintangan melayang
         let currentY = obs.y;
         if (obs.isFlying) {
-          currentY += Math.sin(obs.waveAngle) * 12; // Ayunan naik-turun 12px
+          currentY += Math.sin(obs.waveAngle) * 12;
         }
         ctx.fillText(obs.type, obs.x, currentY + obs.height);
       });
@@ -383,7 +404,6 @@
         let obsWidth = isJumbo ? 34 : 25;
         let obsHeight = isJumbo ? 34 : 25;
         
-        // Rintangan Melayang Berdetak (Khusus Iblis / Semesta)
         let isFlying = (randomType === "😈" || randomType === "🗿") && (Math.random() < 0.35);
         let posY = isFlying ? 110 : (isJumbo ? 135 : 140);
 
@@ -406,13 +426,11 @@
         let obs = obstacles[i];
         obs.x -= obs.speed;
 
-        // Update animasi berdetak naik-turun jika melayang
         if (obs.isFlying) {
-          obs.waveAngle += 0.08; // Kecepatan berdetak
+          obs.waveAngle += 0.08;
           obs.y = obs.baseY + Math.sin(obs.waveAngle) * 12;
         }
 
-        // Hitbox Collision Check
         if (
           invulnerableTimer === 0 &&
           player.x < obs.x + obs.width &&
@@ -432,7 +450,6 @@
           }
         }
 
-        // Passed Obstacle -> +10 Score
         if (obs.x + obs.width < 0) {
           obstacles.splice(i, 1);
           score += 10;
@@ -473,7 +490,7 @@
 
       document.getElementById("selectionScreen").style.display = "none";
       document.getElementById("infoBar").style.display = "flex";
-      document.getElementById("gameSubtitle").innerText = "Tap layar / tekan Spasi untuk lompat!";
+      document.getElementById("gameSubtitle").innerText = "Tap layar / tekan Spasi untuk melompat!";
       document.getElementById("startBtn").style.display = "none";
 
       playMusic();
@@ -550,10 +567,7 @@
       jump();
     });
 
-    ctx.font = "bold 15px Poppins";
-    ctx.fillStyle = "#d97706";
-    ctx.textAlign = "center";
-    ctx.fillText("Pilih Karakter & Klik Mulai!", canvas.width / 2, 105);
+    drawInitialCanvas();
   </script>
 </body>
 </html>
