@@ -21,6 +21,7 @@
       align-items: center;
     }
 
+    /* Tombol Mute / Unmute Musik */
     .music-btn {
       position: fixed;
       top: 15px;
@@ -61,6 +62,7 @@
       margin-bottom: 15px;
     }
 
+    /* Selection Screen */
     .char-select-box {
       display: flex;
       justify-content: center;
@@ -99,6 +101,7 @@
       font-size: 18px;
     }
 
+    /* Info Bar */
     .info-bar {
       display: flex;
       justify-content: space-between;
@@ -113,6 +116,7 @@
       font-size: 16px;
     }
 
+    /* Canvas */
     #gameCanvas {
       background: #fffbeb;
       border: 3px solid #fcd34d;
@@ -157,6 +161,7 @@
 </head>
 <body>
 
+  <!-- Audio Musik & Tombol Sound -->
   <audio id="bg-music" loop src="lagu-game.mp3"></audio>
   <button id="music-toggle" class="music-btn">🎵</button>
 
@@ -167,11 +172,13 @@
     <!-- Layar Pilih Karakter -->
     <div id="selectionScreen">
       <div class="char-select-box">
+        <!-- Astra -->
         <div class="char-card" id="cardAstra" onclick="selectCharacter('astra')">
           <img src="foto-utama.jpg" alt="Astra" class="char-img">
           <div class="char-name">Astra</div>
           <div class="char-emoji-badge">🐸 (Kodok)</div>
         </div>
+        <!-- Reyen -->
         <div class="char-card" id="cardReyen" onclick="selectCharacter('reyen')">
           <img src="momen1.jpg" alt="Reyen" class="char-img">
           <div class="char-name">Reyen</div>
@@ -186,7 +193,7 @@
       <div>Skor: <span id="scoreText">0</span></div>
     </div>
 
-    <!-- Canvas -->
+    <!-- Canvas Tempat Game -->
     <canvas id="gameCanvas" width="400" height="200"></canvas>
 
     <button class="start-btn" id="startBtn" disabled onclick="startGame()">Pilih Karakter Dulu 👆</button>
@@ -195,7 +202,7 @@
   <a href="index.html" class="back-btn">⬅️ Kembali ke Beranda</a>
 
   <script>
-    // WEBAUDIO SOUND EFFECTS
+    // WEBAUDIO GENERATOR UNTUK EFEK SUARA LOMPAT / TABRAK / GAMEOVER
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playSound(type) {
@@ -235,40 +242,34 @@
       }
     }
 
-    // BG MUSIC & AUTOPLAY FIX
+    // AUDIO SYSTEM
     const bgMusic = document.getElementById('bg-music');
     const musicBtn = document.getElementById('music-toggle');
-
-    function playMusic() {
-      bgMusic.play().then(() => {
-        musicBtn.innerText = '🎵';
-      }).catch(() => {
-        musicBtn.innerText = '🔇';
-      });
-    }
 
     musicBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       if (bgMusic.paused) {
-        playMusic();
+        bgMusic.play();
+        musicBtn.innerText = '🎵';
       } else {
         bgMusic.pause();
         musicBtn.innerText = '🔇';
       }
     });
 
-    // GAME VARIABLES
-    let selectedChar = null;
+    // VAR GAME
+    let selectedChar = null; // 'astra' or 'reyen'
     let isPlaying = false;
     let score = 0;
     let highScore = localStorage.getItem("runner_highScore") || 0;
     let lives = 3;
-    let invulnerableTimer = 0;
+    let invulnerableTimer = 0; // Waktu kebal setelah kena tabrak
     let animationFrameId;
 
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
+    // Player
     const player = {
       x: 30,
       y: 135,
@@ -276,14 +277,15 @@
       height: 35,
       dy: 0,
       gravity: 0.65,
-      jumpPower: -10.8,
+      jumpPower: -10.5,
       isGrounded: true,
       emoji: "🐸"
     };
 
+    // Obstacles
     let obstacles = [];
-    let particles = [];
     let frameCount = 0;
+    // Rintangan Random: Meme Semesta (🗿), Yakult (🍼), Anjing Laut (🦭), Iblis (😈)
     const obstacleList = ["🗿", "🍼", "🦭", "😈"];
 
     function selectCharacter(char) {
@@ -302,12 +304,10 @@
       const startBtn = document.getElementById("startBtn");
       startBtn.disabled = false;
       startBtn.innerText = "▶️ Mulai Permainan";
-
-      // Pemicu otomatis musik pada klik pertama
-      playMusic();
     }
 
     function drawPlayer() {
+      // Efek berkedip saat kebal setelah ketabrak
       if (invulnerableTimer > 0 && Math.floor(invulnerableTimer / 5) % 2 === 0) {
         return;
       }
@@ -317,24 +317,9 @@
 
     function drawObstacles() {
       obstacles.forEach(obs => {
-        ctx.font = `${obs.fontSize}px Sans-Serif`;
+        ctx.font = "28px Sans-Serif";
         ctx.fillText(obs.type, obs.x, obs.y + obs.height);
       });
-    }
-
-    function drawParticles() {
-      for (let i = 0; i < particles.length; i++) {
-        let p = particles[i];
-        ctx.fillStyle = `rgba(217, 119, 6, ${p.alpha})`;
-        ctx.font = "bold 13px Poppins";
-        ctx.fillText(p.text, p.x, p.y);
-        p.y -= 1;
-        p.alpha -= 0.03;
-        if (p.alpha <= 0) {
-          particles.splice(i, 1);
-          i--;
-        }
-      }
     }
 
     function updateGame() {
@@ -366,42 +351,26 @@
 
       drawPlayer();
 
-      // Kelajuan bertambah halus seiring tinggi skor
-      let baseSpeed = 4.2 + Math.min(score / 150, 2.5);
-      let spawnInterval = Math.max(85 - Math.floor(score / 50), 55);
-
-      // Spawn Obstacles
+      // Spawn Rintangan Random
       frameCount++;
-      if (frameCount % spawnInterval === 0) {
-        const randomType = obstacleList[Math.floor(Math.random() * obstacleList.length)];
-        
-        // Fitur Skor > 100: Kadang muncul ukuran jumbo (25% peluang)
-        let isJumbo = (score >= 100) && (Math.random() < 0.25);
-        let fontSize = isJumbo ? 38 : 28;
-        let obsWidth = isJumbo ? 34 : 25;
-        let obsHeight = isJumbo ? 34 : 25;
-        
-        // Variasi posisi y: Kadang terbang sedikit (Iblis/Semesta)
-        let isFlying = (randomType === "😈" || randomType === "🗿") && (Math.random() < 0.3);
-        let posY = isFlying ? 115 : (isJumbo ? 135 : 140);
-
+      if (frameCount % 85 === 0) {
+        const randomObstacle = obstacleList[Math.floor(Math.random() * obstacleList.length)];
         obstacles.push({
           x: canvas.width,
-          y: posY,
-          width: obsWidth,
-          height: obsHeight,
-          fontSize: fontSize,
-          type: randomType,
-          speed: baseSpeed
+          y: 140,
+          width: 25,
+          height: 25,
+          type: randomObstacle,
+          speed: 4.2
         });
       }
 
-      // Move & Collide
+      // Move & Check Tabrakan
       for (let i = 0; i < obstacles.length; i++) {
         let obs = obstacles[i];
         obs.x -= obs.speed;
 
-        // Hitbox Collision
+        // Collision Check
         if (
           invulnerableTimer === 0 &&
           player.x < obs.x + obs.width &&
@@ -417,30 +386,20 @@
             gameOver();
             return;
           } else {
-            invulnerableTimer = 45;
+            invulnerableTimer = 45; // Kebal sebentar
           }
         }
 
-        // Passed Obstacle -> +10 Score
+        // Hapus Rintangan & Tambah Skor +10
         if (obs.x + obs.width < 0) {
           obstacles.splice(i, 1);
           score += 10;
           document.getElementById("scoreText").innerText = score;
-          
-          // Efek Teks Melayang +10
-          particles.push({
-            x: player.x + 10,
-            y: player.y,
-            text: "+10",
-            alpha: 1.0
-          });
-
           i--;
         }
       }
 
       drawObstacles();
-      drawParticles();
       animationFrameId = requestAnimationFrame(updateGame);
     }
 
@@ -461,19 +420,20 @@
     function startGame() {
       if (!selectedChar) return;
 
+      // Sembunyikan layar pilih karakter
       document.getElementById("selectionScreen").style.display = "none";
       document.getElementById("infoBar").style.display = "flex";
       document.getElementById("gameSubtitle").innerText = "Tap layar / tekan Spasi untuk lompat!";
       document.getElementById("startBtn").style.display = "none";
 
-      playMusic();
+      // Jalankan Lagu Utama
+      bgMusic.play().catch(() => {});
 
       isPlaying = true;
       score = 0;
       lives = 3;
       invulnerableTimer = 0;
       obstacles = [];
-      particles = [];
       frameCount = 0;
       player.y = 135;
       
@@ -524,6 +484,7 @@
       startBtn.style.display = "block";
     }
 
+    // KONTROL
     window.addEventListener("keydown", (e) => {
       if (e.code === "Space" || e.code === "ArrowUp") {
         e.preventDefault();
@@ -540,6 +501,7 @@
       jump();
     });
 
+    // Tampilan awal Canvas
     ctx.font = "bold 15px Poppins";
     ctx.fillStyle = "#d97706";
     ctx.textAlign = "center";
